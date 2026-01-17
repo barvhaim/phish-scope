@@ -1,0 +1,21 @@
+services:
+  playwright-mcp:
+    build: .
+    container_name: playwright-mcp
+    ports:
+      - "8931:8931"
+    environment:
+      - NODE_ENV=production
+      # Optional: force chromium (default anyway)
+      # - PLAYWRIGHT_BROWSER=chromium
+      # Optional: useful flags
+      # - PLAYWRIGHT_MCP_OUTPUT_DIR=/tmp/playwright-output
+    volumes:
+      - ./playwright-output:/tmp/playwright-output
+    command: >
+      npx @playwright/mcp
+      --headless
+      --host 0.0.0.0
+      --port 8931
+      --allowed-hosts "*"
+    restart: unless-stopped
