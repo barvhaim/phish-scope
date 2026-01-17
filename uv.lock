@@ -1101,7 +1101,9 @@ dependencies = [
     { name = "langchain-ibm" },
     { name = "langchain-ollama" },
     { name = "langchain-openai" },
+    { name = "langgraph" },
     { name = "mcp" },
+    { name = "python-dotenv" },
 ]
 
 [package.dev-dependencies]
@@ -1116,7 +1118,9 @@ requires-dist = [
     { name = "langchain-ibm", specifier = ">=1.0.2" },
     { name = "langchain-ollama", specifier = ">=1.0.1" },
     { name = "langchain-openai", specifier = ">=1.1.7" },
+    { name = "langgraph", specifier = ">=1.0.6" },
     { name = "mcp", specifier = ">=1.25.0" },
+    { name = "python-dotenv", specifier = ">=1.2.1" },
 ]
 
 [package.metadata.requires-dev]

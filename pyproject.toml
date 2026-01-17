@@ -9,7 +9,9 @@ dependencies = [
     "langchain-ibm>=1.0.2",
     "langchain-ollama>=1.0.1",
     "langchain-openai>=1.1.7",
+    "langgraph>=1.0.6",
     "mcp>=1.25.0",
+    "python-dotenv>=1.2.1",
 ]
 
 [dependency-groups]
