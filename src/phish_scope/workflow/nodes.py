@@ -20,7 +20,7 @@ async def page_load_node(state: WorkflowState) -> Command:
     """
 
     url = state.get("url")
-    logger.info(f"Loading page for URL: {url}")
+    logger.info("Loading page for URL: %s", url)
 
     return Command(
         goto=END,
