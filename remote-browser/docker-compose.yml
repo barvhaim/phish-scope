@@ -6,6 +6,7 @@ services:
     volumes:
       - ./playwright-output:/home/pwuser/playwright-output
     command:
+      - --isolated
       - --headless
       - --browser
       - chromium                # ← explicitly set

@@ -38,8 +38,17 @@ async def page_load(url: str) -> Dict[str, Any]:
                 if hasattr(result, "isError") and result.isError:
                     status = "error"
 
+                content = ""
+                if hasattr(result, "content") and isinstance(result.content, list):
+                    # Combine all text components
+                    content = "\n".join(
+                        item.text if hasattr(item, "text") else str(item) for item in result.content
+                    )
+                else:
+                    content = str(result)
+
                 return {
-                    "content": result.content if hasattr(result, "content") else str(result),
+                    "content": content,
                     "status": status,
                     "is_error": getattr(result, "isError", False),
                 }

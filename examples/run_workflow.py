@@ -15,7 +15,7 @@ async def main():
 
     # 2. Define the initial state
     # Replace this URL with any you'd like to analyze
-    target_url = "https://example.com"
+    target_url = "https://news.ycombinator.com/"
     initial_state = {"url": target_url, "page_load_result": None, "error": None}
 
     logger.info(f"Starting workflow for URL: {target_url}")
