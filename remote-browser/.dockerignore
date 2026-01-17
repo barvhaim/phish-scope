@@ -1,9 +1,0 @@
-node_modules
-npm-debug.log
-.git
-.github
-.vscode
-.dockerignore
-Dockerfile
-docker-compose.yml
-*.md
