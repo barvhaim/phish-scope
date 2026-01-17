@@ -178,3 +178,4 @@ extensions_storage/
 .playwright-mcp/
 *.db
 .DS_Store
+reports/
