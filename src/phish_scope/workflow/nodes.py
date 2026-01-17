@@ -28,6 +28,9 @@ from phish_scope.core.browser import (
     browser_take_screenshot,
     browser_get_network_log,
 )
+import json
+from phish_scope.llm.clients import get_chat_llm_client
+from phish_scope.llm.prompts import get_prompts
 
 
 logger = logging.getLogger(__name__)
@@ -203,14 +206,63 @@ async def network_analysis_node(state: WorkflowState) -> Command:
 
 async def ai_analysis_node(state: WorkflowState) -> Command:
     """Node that performs LLM-based analysis."""
-    # Placeholder for AI analysis - using fallback for now
+    url = state.get("url")
     dom_findings = state.get("dom_findings", {})
     js_findings = state.get("js_findings", {})
     network_findings = state.get("network_findings", {})
 
     try:
-        logger.info("Running AI analysis (fallback)...")
-        findings = _fallback_assessment(dom_findings, js_findings, network_findings)
+        logger.info("Running AI analysis...")
+
+        # 1. Initialize LLM client
+        import os
+
+        model_name = os.getenv("LLM_MODEL", "meta-llama/llama-3-3-70b-instruct")
+        llm = get_chat_llm_client(model_name=model_name)
+
+        # 2. Get prompt templates
+        prompts = get_prompts("phishing_analysis")
+        if not prompts or "phishing_analysis" not in prompts:
+            raise ValueError("Phishing analysis prompt template not found")
+
+        prompt_config = prompts["phishing_analysis"]
+        system_prompt = prompt_config.get("system_prompt", "")
+        user_prompt_template = prompt_config.get("user_prompt", "")
+
+        # 3. Format user prompt
+        user_prompt = user_prompt_template.replace("{{url}}", str(url))
+        user_prompt = user_prompt.replace("{{dom_findings}}", json.dumps(dom_findings, indent=2))
+        user_prompt = user_prompt.replace("{{js_findings}}", json.dumps(js_findings, indent=2))
+        user_prompt = user_prompt.replace(
+            "{{network_findings}}", json.dumps(network_findings, indent=2)
+        )
+
+        # 4. Call LLM
+        messages = [("system", system_prompt), ("user", user_prompt)]
+
+        response = await llm.ainvoke(messages)
+
+        # 5. Parse response content
+        # LangChain response content can be string or list of dicts/strings
+        content = response.content
+        logger.info(f"LLM Response received. Content length: {len(content) if content else 0}")
+        logger.debug(f"LLM Response content: {content}")
+
+        if not isinstance(content, str):
+            content = str(content)
+
+        if not content.strip():
+            raise ValueError("LLM returned an empty response")
+        # Extract JSON from potential triple backticks
+        if "```json" in content:
+            content = content.split("```json")[1].split("```")[0].strip()
+        elif "```" in content:
+            content = content.split("```")[1].split("```")[0].strip()
+
+        findings = json.loads(content)
+
+        # Ensure ai_enabled is True when coming from LLM
+        findings["ai_enabled"] = True
 
         return Command(
             goto=REPORT_GENERATION_NODE,
