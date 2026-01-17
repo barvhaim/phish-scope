@@ -92,18 +92,18 @@ def get_chat_llm_client(
         The LLM client instance.
     """
     if LLM_PROVIDER == LLMProviderType.OLLAMA:
-        from langchain_ollama import (
+        from langchain_ollama import (  # pylint: disable=import-outside-toplevel
             ChatOllama,
-        )  # pylint: disable=import-outside-toplevel
+        )
 
         return ChatOllama(
             **_get_base_llm_settings(model_name=model_name, model_parameters=model_parameters)
         )
 
     if LLM_PROVIDER in (LLMProviderType.OPENAI, LLMProviderType.RITS):
-        from langchain_openai import (
+        from langchain_openai import (  # pylint: disable=import-outside-toplevel
             ChatOpenAI,
-        )  # pylint: disable=import-outside-toplevel
+        )
 
         return ChatOpenAI(
             **_get_base_llm_settings(model_name=model_name, model_parameters=model_parameters)
